@@ -28,7 +28,6 @@ class Image:
                         desired_variance * ((self.original[i, j] - np.mean(self.original)) ** 2) / np.var(self.original, ddof=1))
 
     class Block:
-
         def __init__(self, i, j, x_gradients, y_gradients, gaussian_filtered_image, window, im):
             center_x = i + window//2
             center_y = j + window // 2

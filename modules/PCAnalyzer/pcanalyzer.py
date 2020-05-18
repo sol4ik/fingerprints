@@ -1,4 +1,7 @@
 import numpy as np
+from collections import OrderedDict
+
+from ..finger_error import FingerError
 
 
 class PCAnalyzer:
@@ -10,39 +13,72 @@ class PCAnalyzer:
         """
         self.n = n
         self.p = p
+        self.k = p - int(2 * p / 3 + 1)  # data dimension to reduce to
+
         self.data = data
         self.__centered_data = data
 
-    def apply(self):
+        self.__sigma = None  # covariance matrix
+        self.__eigen = OrderedDict()
+
+        self.k_basis = None
+
+    def calculate(self):
         self.__center_data()
         self.__covariance_matrix()
+        self.__principal_components()
+
+        # construct change of basis matrix
+        self.k_basis = list()
+        for evc in self.__eigen.values():
+            self.k_basis.append(list(evc))
+        self.k_basis = np.array(self.k_basis)
+
+    def change_basis(self, vector):
+        """
+        After calculating the principal components of our dataset we want to
+        express all the data within new reduced basis.
+        :param vector: vector to expressed within new basis
+        """
+        if len(vector) != self.p:
+            raise FingerError("invalid data dimension")
+        return self.k_basis.dot(vector)
+
+    def change_basis_all(self):
+        """
+        Express all the data from input data matrix within new basis consisting of
+        k principal components.
+        """
+        to_return = list()
+        for v in self.data:
+            to_return.append(self.change_basis(v))
+        return to_return
+
 
     def __center_data(self):
         """
         PCA starts off by assuming that our data are spread with zero mean,
         which means that we need to center them.
         """
-
-        data_center = np.array(self.data).transpose().mean(axis=1)
+        data_center = np.array(self.data).mean(axis=1)
         data_center = np.array([[el for _ in range(self.p)] for el in data_center])
-        self.__centered_data = (np.array(self.data).transpose() - data_center).transpose()
-
-        # data_center = [0 for _ in range(self.p)]
-        # for i in range(self.p):
-        #     cur_avg = 0
-        #     for j in range(self.n):
-        #         cur_avg += self.data[j][i]
-        #     cur_avg /= self.n
-        #     data_center[i] = cur_avg
-        #
-        # for i in range(self.p):
-        #     for j in range(self.n):
-        #         self.__centered_data[j][i] -= data_center[i]
+        self.__centered_data = np.array(self.data) - data_center
 
     def __covariance_matrix(self):
         c = np.array(self.__centered_data)
         c_t = c.transpose()
-        self.__cov_matrix = c_t.dot(c)
+        self.__sigma = c_t.dot(c)
 
     def __principal_components(self):
-        pass
+        # eigenvalues and eigenvectors of covariance matrix
+        evs, evcs = np.linalg.eig(self.__sigma)
+
+        # since cv matrix is symmetric and we have exactly p eigenvalues
+        for i in range(self.p):
+            self.__eigen[evs[i]] = evcs[i]
+
+        evs.sort()
+        to_del = evs[::-1][:self.k + 1]
+
+        for key in to_del:
+            del self.__eigen[key]
