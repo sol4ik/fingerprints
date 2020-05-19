@@ -56,8 +56,28 @@ class Dataset:
         dist = dist ** 0.5
         return dist
 
+    def norm(self, vect):
+        norm = 0
+        for v in vect:
+            norm += v ** 2
+        return norm ** 0.5
+
     def verify(self):
-        for fingerprint in self.pca.
+        self.new_basis_data = list()
+        for vect in self.data_matrix:
+            self.new_basis_data.append(self.pca.change_basis(vect))
+        
+        distances = list()
+        sum_dist = 0
+        for vect in self.new_basis_data[:-1]:
+            new_dist = self.dist(self.new_basis_data[-1], vect)
+            distances.append(new_dist)
+            sum_dist += new_dist
+        avg_dist = sum_dist / len(distances)
+        avg_dist /= self.norm(self.new_basis_data[-1])
+        if abs(avg_dist - self.DELTA) > 0:
+            return False
+        return True
 
 d = Dataset("../../data")
 d.load_data()
