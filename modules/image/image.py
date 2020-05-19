@@ -10,7 +10,7 @@ class Image:
     def __init__(self, path):
         self.original = imread(path, as_gray=True) # type - numpy.ndarray size = 200x200
         self._window = 3
-        self.radius = 150//2 # діаметр відповідно 148
+        self.radius = 150 // 2 # діаметр відповідно 148
         self._noramlization()
         # self.crop_image() # assigns to self.centered_im the value of centered image
 
@@ -137,7 +137,7 @@ class Image:
 
 
 # EXAMPLE OF USAGE
-im = Image("../../data/sub1/11.jpg")
+# im = Image("../../data/sub1/11.jpg")
 # plt.subplot(2, 2, 1), plt.imshow(im._normalized_im, cmap='gray')
 # plt.title('Original test0 150 freq'), plt.xticks([]), plt.yticks([])
 # plt.subplot(2, 2, 2), plt.imshow(im.centered_im, cmap='gray')
