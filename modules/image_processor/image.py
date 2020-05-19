@@ -86,15 +86,12 @@ class Image:
         return orients
 
     def __set_center(self):
-
         locals = self.__orientations()
         def most_frequent(List):
             return max(set(List), key=List.count)
 
         most_frequent_x = most_frequent([i[0] for i in locals])
-
         most_frequent_y = most_frequent([i[1] for i in locals])
-
         return (most_frequent_x, most_frequent_y)
 
     def _crop_image(self):
@@ -159,4 +156,3 @@ class Image:
 # plt.title('centered test2 150 freq'), plt.xticks([]), plt.yticks([])
 #
 # plt.show()
-
