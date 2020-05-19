@@ -19,7 +19,7 @@ class Finger:
     def __str__(self):
         return self.name + ": " + self.type
 
-    def load(self):
+    def load_images(self):
         """
         Load all the pictures from directory given and create Image wrapper for each of them.
         """

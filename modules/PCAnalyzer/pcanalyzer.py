@@ -11,6 +11,7 @@ class PCAnalyzer:
         :param p: number of characteristics / data matrix columns / row size
         :param data: the data matrix of size n x p
         """
+        self.__calculated = False
         self.n = n
         self.p = p
         self.k = p - int(2 * p / 3 + 1)  # data dimension to reduce to
@@ -22,6 +23,7 @@ class PCAnalyzer:
         self.__eigen = OrderedDict()
 
         self.k_basis = None
+        self.to_k_basis = None
 
     def calculate(self):
         self.__center_data()
@@ -34,15 +36,22 @@ class PCAnalyzer:
             self.k_basis.append(list(evc))
         self.k_basis = np.array(self.k_basis)
 
+        # transition matrix to a new basis - first k principal components
+        self.to_k_basis = np.linalg.pinv(self.k_basis)
+
+        self.__calculated = True
+
     def change_basis(self, vector):
         """
         After calculating the principal components of our dataset we want to
         express all the data within new reduced basis.
         :param vector: vector to expressed within new basis
         """
+        if not self.__calculated:
+            raise FingerError("no principal components calculated")
         if len(vector) != self.p:
             raise FingerError("invalid data dimension")
-        return self.k_basis.dot(vector)
+        return self.to_k_basis.dot(vector)
 
     def change_basis_all(self):
         """
