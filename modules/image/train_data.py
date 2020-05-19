@@ -8,6 +8,9 @@ SAMPLE_DIR = "sub"
 
 
 def crop_train_data():
+    """
+    Normalize and crop all the train data and save in new directory.
+    """
     i = 0
     for subdir in os.walk(DATA_DIR):
         for sample in os.walk(subdir[0]):
