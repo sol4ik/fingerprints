@@ -1,6 +1,6 @@
 import os
 
-from ..image_processor import Image
+from ..image import Image
 from ..finger_error import FingerError
 
 

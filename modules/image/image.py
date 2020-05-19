@@ -4,6 +4,7 @@ import matplotlib.pylab as plt
 import numpy as np
 from math import sqrt, atan, cos, sin, ceil
 from tqdm import tqdm
+import png
 
 class Image:
     def __init__(self, path):
@@ -11,7 +12,7 @@ class Image:
         self._window = 3
         self.radius = 150//2 # діаметр відповідно 148
         self._noramlization()
-        self._crop_image() # assigns to self.centered_im the value of centered image
+        # self.crop_image() # assigns to self.centered_im the value of centered image
 
     def _noramlization(self):
         desired_mean = 50  # according to the paper
@@ -86,15 +87,18 @@ class Image:
         return orients
 
     def __set_center(self):
+
         locals = self.__orientations()
         def most_frequent(List):
             return max(set(List), key=List.count)
 
         most_frequent_x = most_frequent([i[0] for i in locals])
+
         most_frequent_y = most_frequent([i[1] for i in locals])
+
         return (most_frequent_x, most_frequent_y)
 
-    def _crop_image(self):
+    def crop_image(self):
 
         core_point = self.__set_center()
 
@@ -127,13 +131,19 @@ class Image:
 
         self.centered_im = self._normalized_im[min_x: max_x, min_y : max_y]
 
+    def save_img(self, path_to_save):
+        to_image = np.array(self.centered_im).astype(np.uint8)
+        png.from_array(to_image, 'L').save(path_to_save)
+
+
 # EXAMPLE OF USAGE
-# im = Image("test.jpg")
+im = Image("../../data/sub1/11.jpg")
 # plt.subplot(2, 2, 1), plt.imshow(im._normalized_im, cmap='gray')
 # plt.title('Original test0 150 freq'), plt.xticks([]), plt.yticks([])
 # plt.subplot(2, 2, 2), plt.imshow(im.centered_im, cmap='gray')
 # plt.title('centered test0 150 freq'), plt.xticks([]), plt.yticks([])
-#
+# im.save_img()
+
 # im2 = Image("test2.jpg")
 # plt.subplot(2, 2, 3), plt.imshow(im2._normalized_im, cmap='gray')
 # plt.title('Original test2 150 freq'), plt.xticks([]), plt.yticks([])
