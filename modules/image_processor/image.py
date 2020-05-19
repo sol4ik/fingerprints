@@ -10,7 +10,7 @@ class Image:
         self.original = imread(path, as_gray=True) # type - numpy.ndarray size = 200x200
         self._window = 3
         self.radius = 150//2 # діаметр відповідно 148
-        # self._noramlization()
+        self._noramlization()
         self._crop_image() # assigns to self.centered_im the value of centered image
 
     def _noramlization(self):
