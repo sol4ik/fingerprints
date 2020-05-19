@@ -34,7 +34,7 @@ class Image:
             center_y = j + window // 2
             self.center_location = (center_x, center_y)
 
-            def local_orientation(i, j):
+            def local_orientation(i, j):         # gradients direction 
                 V_x = sum([2 * x_gradients[u, v] * y_gradients[u, v] for u in range(i, i + window)
                                  for v in range(j , j+ window)])
 
