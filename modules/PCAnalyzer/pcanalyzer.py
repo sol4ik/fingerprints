@@ -34,10 +34,11 @@ class PCAnalyzer:
         self.k_basis = list()
         for evc in self.__eigen.values():
             self.k_basis.append(list(evc))
+        print (self.k_basis)
         self.k_basis = np.array(self.k_basis)
 
         # transition matrix to a new basis - first k principal components
-        self.to_k_basis = np.linalg.pinv(self.k_basis)
+        self.to_k_basis = self.k_basis.transpose()
 
         self.__calculated = True
 
@@ -84,13 +85,17 @@ class PCAnalyzer:
         print("...principal components")
         # eigenvalues and eigenvectors of covariance matrix
         evs, evcs = np.linalg.eig(self.__sigma)
+        print(evs, evcs)
 
         # since cv matrix is symmetric and we have exactly p eigenvalues
         for i in range(self.p):
             self.__eigen[evs[i]] = evcs[i]
+            # print(self.__eigen[evs[i]])
 
         evs.sort()
-        to_del = evs[::-1][:self.k + 1]
+        to_del = evs[::-1]
+        to_del = to_del[:self.k + 1]
 
-        # for key in to_del:
-        #     del self.__eigen[key]
+        for key in to_del:
+            print(self.__eigen[key])
+            # del self.__eigen[key]
