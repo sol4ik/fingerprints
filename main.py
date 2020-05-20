@@ -1,4 +1,4 @@
-from modules.dataset import Dataset
+from modules.dataset.dataset import Dataset
 
 if __name__ == "__main__":
     img_path = input("> image path ")
@@ -8,7 +8,8 @@ if __name__ == "__main__":
     dataset.load_data()
     dataset.add_new(img_path)
     dataset.pca_calculate()
-    if dataset.verify():
-        print("> verified")
+    verifid = dataset.verify()
+    if verified:
+        print("\n ! verified")
     else:
-        print("! not verified")
+        print("\n ! not verified")
