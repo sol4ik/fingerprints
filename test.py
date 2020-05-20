@@ -1,4 +1,4 @@
-from modules.dataset import Dataset
+from modules.dataset.dataset import Dataset
 
 
 def test():
@@ -14,9 +14,9 @@ def test():
         name = "sub" + str(sample)
 
         for img in ["yes.jpg", "no.jpg"]:
-            dataset = Dataset("training_data/" + name)
+            dataset = Dataset(name)
             dataset.load_data()
-            dataset.add_new("test_data" + name + "/" + img)
+            dataset.add_new("test_data/" + name + "/" + img)
             dataset.pca_calculate()
             verified = dataset.verify()
 

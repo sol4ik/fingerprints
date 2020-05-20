@@ -1,7 +1,7 @@
 import numpy as np
 from collections import OrderedDict
 
-from ..finger_error import FingerError
+from ..finger_error.finger_error import FingerError
 
 
 class PCAnalyzer:
@@ -69,16 +69,19 @@ class PCAnalyzer:
         PCA starts off by assuming that our data are spread with zero mean,
         which means that we need to center them.
         """
+        print("...center data")
         data_center = np.array(self.data).mean(axis=1)
         data_center = np.array([[el for _ in range(self.p)] for el in data_center])
         self.__centered_data = np.array(self.data) - data_center
 
     def __covariance_matrix(self):
+        print("...covariance matrix")
         c = np.array(self.__centered_data)
         c_t = c.transpose()
         self.__sigma = c_t.dot(c)
 
     def __principal_components(self):
+        print("...principal components")
         # eigenvalues and eigenvectors of covariance matrix
         evs, evcs = np.linalg.eig(self.__sigma)
 
@@ -89,5 +92,5 @@ class PCAnalyzer:
         evs.sort()
         to_del = evs[::-1][:self.k + 1]
 
-        for key in to_del:
-            del self.__eigen[key]
+        # for key in to_del:
+        #     del self.__eigen[key]

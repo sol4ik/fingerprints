@@ -1,7 +1,7 @@
 import os
 
-from ..image import Image
-from ..finger_error import FingerError
+from ..image.image import Image
+from ..finger_error.finger_error import FingerError
 
 
 class Finger:

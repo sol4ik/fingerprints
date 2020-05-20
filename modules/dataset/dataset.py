@@ -1,9 +1,9 @@
 import os
 import numpy as np
 
-from ..finger import Finger
-from ..image import Image
-from ..PCAnalyzer import PCAnalyzer
+from ..finger.finger import Finger
+from ..image.image import Image
+from ..PCAnalyzer.pcanalyzer import PCAnalyzer
 
 class Dataset:
     DELTA = 0.3
@@ -12,7 +12,7 @@ class Dataset:
         self.suggestion = dir
 
         self.data = list()
-        self.data_matrix = None
+        self.data_matrix = list()
         self.to_recognize = None
         self.pca = None
 
@@ -21,18 +21,20 @@ class Dataset:
         Load all the images from data directory
         """
         for subdir in os.walk(self.dir):
-            self.data.append(Finger(subdir[0]))
-            self.data[-1].load_images()
+            for img in os.listdir(subdir[0]):
+                if os.path.isfile(img):
+                    self.data.append(Image(self.dir + "/" + subdir + "/" + img))
+            return
 
     def add_new(self, path):
         self.to_recognize = Image(path)
         self.to_recognize.crop_image()
 
     def data_to_matrix(self):
-        for finger in self.data:
-            for img in finger.images:
-                self.data_matrix.append(np.flatten(img.centered_im))
-        self.data_matrix.append(np.flatten(self.to_recognize.centered_im))
+        for img in self.data:
+            self.data_matrix.append(np.ndarray.flatten(img.original))
+
+        self.data_matrix.append(np.ndarray.flatten(self.to_recognize.centered_im))
 
     def pca_calculate(self):
         """
@@ -40,7 +42,7 @@ class Dataset:
         """
         self.data_to_matrix()
 
-        self.pca = PCAnalyzer(self.data_matrix)
+        self.pca = PCAnalyzer(len(self.data_matrix), 150 * 150, self.data_matrix)
         self.pca.calculate()
 
         self.to_pca_basis()
@@ -63,10 +65,11 @@ class Dataset:
         return norm ** 0.5
 
     def verify(self):
+        print("...verifying")
         self.new_basis_data = list()
         for vect in self.data_matrix:
             self.new_basis_data.append(self.pca.change_basis(vect))
-        
+
         distances = list()
         sum_dist = 0
         for vect in self.new_basis_data[:-1]:
